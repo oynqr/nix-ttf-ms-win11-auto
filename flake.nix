@@ -19,10 +19,7 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems f;
       pkgsFor = system: nixpkgs.legacyPackages.${system};
       packagesFor =
-        system:
-        let
-          pkgs = pkgsFor system;
-        in
+        pkgs:
         pkgs.lib.mapAttrs' (
           jsonFileName: _:
           let
@@ -50,7 +47,7 @@
         system:
         let
           pkgs = pkgsFor system;
-          allPackages = packagesFor system;
+          allPackages = packagesFor pkgs;
         in
         allPackages
         // rec {
@@ -61,7 +58,7 @@
           default = ttf-ms-win11-auto-all;
         }
       );
-      overlays.default = final: _prev: packagesFor final.stdenv.hostPlatform.system final;
+      overlays.default = _final: prev: packagesFor prev;
       devShells = forAllSystems (
         system:
         let
