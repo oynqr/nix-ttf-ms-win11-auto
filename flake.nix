@@ -65,7 +65,10 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = pkgsFor system;
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
           updateDeps = with pkgs; [
             bash
             git
